@@ -56,10 +56,11 @@ proc answer2(): int =
     for en in auntie.features:
       var (name, val) = en
       var rval = dp[name]
-      if (name == "cats" or name == "trees"):
+      case name
+      of "cats", "trees":
         if val <= rval:
           return false
-      elif (name == "pomeranians" or name == "goldfish"):
+      of "pomeranians", "goldfish":
         if val >= rval:
           return false
       else:
