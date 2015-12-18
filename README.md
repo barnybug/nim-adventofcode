@@ -52,3 +52,6 @@ Regex parsing input into set of features, and then filtering of features by the 
 
 ## Day 17: No Such Thing as Too Much
 Brute force combinations of inputs to sum to a given value.
+
+## Day 18: Like a GIF For Your Yard
+Conway's game of life.
