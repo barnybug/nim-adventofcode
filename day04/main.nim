@@ -2,13 +2,10 @@ import md5
 import strutils
 
 var secret = "ckczppom"
-var prefix = "00000"
-for i in 1..high(int):
-  var hash = getMD5(secret & $i)
-  if hash.startsWith(prefix):
-    echo i
-    if prefix == "00000":
-      # 2nd answer
-      prefix = "000000"
-    else:
-      break
+proc adventcoin(prefix: string): int =
+  for i in 1..int.high:
+    if getMD5(secret & $i).startsWith(prefix):
+      return i
+
+echo "Answer #1: ", adventcoin("00000")
+echo "Answer #2: ", adventcoin("000000")

@@ -4,11 +4,12 @@ proc score(sprinkles: int, peanutButter: int, frosting: int, sugar: int): (int, 
   # PeanutButter: capacity -1, durability 3, flavor 0, texture 0, calories 1
   # Frosting: capacity 0, durability -1, flavor 4, texture 0, calories 6
   # Sugar: capacity -1, durability 0, flavor 0, texture 2, calories 8
-  var capacity = 5*sprinkles -1*peanutButter -1*sugar
-  var durability = -sprinkles + 3*peanutButter - frosting
-  var flavor = 4*frosting
-  var texture = 2*sugar
-  var calories = 5*sprinkles + peanutButter + 6*frosting + 8*sugar
+  var
+    capacity = 5*sprinkles -1*peanutButter -1*sugar
+    durability = -sprinkles + 3*peanutButter - frosting
+    flavor = 4*frosting
+    texture = 2*sugar
+    calories = 5*sprinkles + peanutButter + 6*frosting + 8*sugar
 
   if capacity <= 0 or durability <= 0 or flavor <= 0 or texture <= 0:
     return (0, 0)

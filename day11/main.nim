@@ -1,29 +1,18 @@
-import strutils
-import unittest
+import sequtils, strutils, unittest
 
-var straights = @[
-  "abc", "bcd", "cde", "def", "efg", "fgh", "ghi", "hij", "ijk", "jkl", "klm", "lmn", "mno", "nop", "opq", "pqr", "qrs", "rst", "stu", "tuv", "uvw", "vwx", "wxy", "xyz"
-]
-
-var twopairs = @[
-  "aa", "bb", "cc", "dd", "ee", "ff", "gg", "hh", "jj", "kk", "mm", "nn", "pp", "qq", "rr", "ss", "tt", "uu", "vv", "ww", "xx", "yy", "zz",
-]
+var straights = @["abc", "bcd", "cde", "def", "efg", "fgh", "ghi", "hij", "ijk", "jkl", "klm", "lmn", "mno", "nop", "opq", "pqr", "qrs", "rst", "stu", "tuv", "uvw", "vwx", "wxy", "xyz"]
+var twopairs = ('a'..'z').mapIt(it & it)
 
 proc next(s: var string) =
   var cresult: cstring = s
   for i in countdown(len(s)-1, 0):
     var ch = s[i]
     var nch = case ch
-    of 'h':
-      'j'
-    of 'n':
-      'p'
-    of 'k':
-      'm'
-    of 'z':
-      'a'
-    else:
-      chr(ord(ch) + 1)
+    of 'h': 'j'
+    of 'n': 'p'
+    of 'k': 'm'
+    of 'z': 'a'
+    else: chr(ord(ch) + 1)
 
     cresult[i] = nch
     if ch != 'z':

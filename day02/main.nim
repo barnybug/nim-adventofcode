@@ -7,24 +7,21 @@ let regex = re"(\d+)x(\d+)x(\d+)"
 
 proc parse(line: string): (int, int, int) =
   var m = newSeq[string](3)
-  discard line.find(regex, m)
-  var arr = [parseInt(m[0]), parseInt(m[1]), parseInt(m[2])]
-  sort(arr, system.cmp[int])
+  assert line.find(regex, m) > -1
+  var arr = m.map(parseInt).sorted(cmp)
   return (arr[0], arr[1], arr[2])
 
-proc squareFoot(line: string): int =
-  var (x, y, z) = parse(line)
+proc squareFoot(x, y, z: int): int =
   return 2*x*y + 2*x*z + 2*y*z + x*y
 
-proc ribbon(line: string): int =
-  var (x, y, z) = parse(line)
+proc ribbon(x, y, z: int): int =
   return 2*x + 2*y + x*y*z
 
-var area = 0
-var rib = 0
+var area, rib: int
 for line in lines "input.txt":
-  area += squareFoot(line)
-  rib += ribbon(line)
+  var (x, y, z) = parse(line)
+  area += squareFoot(x, y, z)
+  rib += ribbon(x, y, z)
 
-echo "area: ", area
-echo "ribbon: ", rib
+echo "Answer #1: ", area
+echo "Answer #2: ", rib

@@ -1,6 +1,4 @@
-import combinatorics
-import sequtils
-import strutils
+import combinatorics, sequtils, strutils
 
 template sum(list: openarray[expr]): expr =
   foldl(list, a + b)

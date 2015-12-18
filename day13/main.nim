@@ -1,26 +1,18 @@
-import combinatorics
-import re
-import sequtils
-import strutils
-import tables
+import combinatorics, nre, options, sequtils, strutils, tables
 
 let regex = re"(\S+)\swould\s(gain|lose)\s(\d+)\shappiness\sunits\sby\ssitting\snext\sto\s(\S+)."
-var matches: array[4, string]
 var costs = initTable[(string, string), int]()
 var names = newSeq[string]()
 for line in lines "input.txt":
-  if line.find(regex, matches) != -1:
-    var
-      a = matches[0]
-      units = parseInt(matches[2])
-      b = matches[3]
-    if matches[1] == "lose":
+  var m = line.find(regex)
+  if m.isSome:
+    var c = m.get.captures
+    var units = parseInt(c[2])
+    if c[1] == "lose":
       units = -units
-
-    if not(a in names):
-      names.add(a)
-
-    costs[(a,b)] = units
+    if c[0] notin names:
+      names.add(c[0])
+    costs[(c[0],c[3])] = units
 
 proc score(seating: openarray[string]): int =
   let ln = seating.len

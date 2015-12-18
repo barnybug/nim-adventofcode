@@ -1,10 +1,6 @@
-import re
-import sequtils
-import strutils
-import tables
+import nre, options, sequtils, strutils, tables
 
 var regex = re"Sue\s(\d+):\s(.+)"
-
 var dp = initTable[string,int]()
 
 dp["children"] = 3
@@ -24,15 +20,13 @@ type Auntie = ref object
   features: seq[Feature]
 
 proc parseAuntie(line: string): Auntie =
-  var m = newSeq[string](2)
-  discard line.match(regex, m)
-  var auntie = Auntie(sue: parseInt(m[0]), features: @[])
-  var parts = m[1].split(", ")
+  var m = line.match(regex)
+  var auntie = Auntie(sue: parseInt(m.get.captures[0]), features: @[])
+  var parts = m.get.captures[1].split(", ")
   for part in parts:
     var m = part.split(": ")
     var name = m[0]
-    var val = parseInt(m[1])
-
+    var val = parseInt m[1]
     auntie.features.add((name, val))
   return auntie
 

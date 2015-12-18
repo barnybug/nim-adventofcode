@@ -14,10 +14,8 @@ for line in lines "input.txt":
       a = matches[0]
       b = matches[1]
       units = parseInt(matches[2])
-    if a notin nodes:
-      nodes.add(a)
-    if b notin nodes:
-      nodes.add(b)
+    if a notin nodes: nodes.add(a)
+    if b notin nodes: nodes.add(b)
 
     costs[(a,b)] = units
     costs[(b,a)] = units

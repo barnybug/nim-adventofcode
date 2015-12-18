@@ -1,21 +1,5 @@
 import json
 
-proc rec(obj: JsonNode): float =
-  result = case obj.kind
-  of JObject:
-    var total = 0.0
-    for k, val in pairs(obj):
-      total += rec(val)
-    total
-  of JArray:
-    var total = 0.0
-    for en in obj:
-      total += rec(en)
-    total
-  of JInt: float(obj.num)
-  of JFloat: obj.fnum
-  else: 0.0
-
 proc sumJson(obj: JsonNode, pred: proc (item: JsonNode): bool {.closure.}): float =
   if not pred(obj):
     return 0.0

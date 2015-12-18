@@ -1,19 +1,17 @@
-import re
-import sequtils
-import strutils
+import nre, options, sequtils, strutils
 
 type Reindeer = ref object
   name: string
   speed, duration, rest, distance, points: int
 
 let regex = re"(\S+)\scan\sfly\s(\d+)\skm/s\sfor\s(\d+)\sseconds,\sbut\sthen\smust\srest\sfor\s(\d+)\sseconds."
-
-var matches: array[4, string]
 var reindeers = newSeq[Reindeer]()
 for line in lines "input.txt":
-  if line.find(regex, matches) != -1:
-    var deer = Reindeer(name: matches[0], speed: parseInt(matches[1]),
-      duration: parseInt(matches[2]), rest: parseInt(matches[3]))
+  var m = line.find(regex)
+  if m.isSome:
+    var c = m.get.captures
+    var deer = Reindeer(name: c[0], speed: parseInt(c[1]),
+      duration: parseInt(c[2]), rest: parseInt(c[3]))
     reindeers.add(deer)
 
 for t in 0..2503:

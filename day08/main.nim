@@ -1,24 +1,15 @@
-import re
+import nre
 import strutils
 
 var reBackslash = re"""\\(\\|"|x[0-9a-f][0-9a-f])"""
 
-proc unescape(s: string): string =
+proc unescapeN(s: string): string =
   return s[1..len(s)-2].replace(reBackslash, ".")
 
-proc escape(s: string): string =
-  return "\"" & s.replace("\\", "\\\\").replace("\"", "\\\"") & "\""
-
-var
-  ans1 = 0
-  ans2 = 0
-
+var ans1, ans2: int
 for line in lines "input.txt":
-  var x = unescape(line)
-  ans1 += len(line) - len(x)
-
-  var y = escape(line)
-  ans2 += len(y) - len(line)
+  ans1 += len(line) - len(unescapeN(line))
+  ans2 += len(escape(line)) - len(line)
 
 echo "Answer #1: ", ans1
 echo "Answer #2: ", ans2
