@@ -1,7 +1,5 @@
 import math
 
-var input = 29000000
-
 proc answer1a(input: int): int =
   var target = input div 10
   for house in 1..int.high:
@@ -33,25 +31,16 @@ proc answer2a(input: int): int =
       result = house
       break
 
-proc answer1b(input: int): int =
-  var d = input div 10
+proc answer(input: int, m: int, limit: int): int =
+  var d = input div m
   var counts = newSeq[int](d)
   for i in 1..d:
-    for j in 1..d div i:
-      counts[j*i-1] += i * 10
+    for j in 1..min(d div i, limit):
+      counts[j*i-1] += i * m
     if counts[i-1] >= input:
       return i
 
-proc answer2b(input: int): int =
-  var d = input div 11
-  var counts = newSeq[int](d)
-  for i in 1..d:
-    for j in 1..min(d div i, 50):
-      counts[j*i-1] += i * 11
-    if counts[i-1] >= input:
-      return i
-
-# echo "Answer #1: ", answer1a(input)
-# echo "Answer #2: ", answer2a(input)
-echo "Answer #1: ", answer1b(input)
-echo "Answer #2: ", answer2b(input)
+# echo "Answer #1: ", answer1a(29000000)
+# echo "Answer #2: ", answer2a(29000000)
+echo "Answer #1: ", answer(29000000, 10, int.high)
+echo "Answer #2: ", answer(29000000, 11, 50)
