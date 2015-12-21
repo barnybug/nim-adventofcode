@@ -55,3 +55,12 @@ Brute force combinations of inputs to sum to a given value.
 
 ## Day 18: Like a GIF For Your Yard
 Conway's game of life.
+
+## Day 19: Medicine for Rudolph
+Rule application to calculate minimum substitutions for a -> b.
+
+## Day 20: Infinite Elves and Infinite Houses
+Variation on Erastothenes sieve to find minimum sum of factors > X.
+
+## Day 21: RPG Simulator 20XX
+Addition of permutations to minimise cost.
