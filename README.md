@@ -64,3 +64,6 @@ Variation on Erastothenes sieve to find minimum sum of factors > X.
 
 ## Day 21: RPG Simulator 20XX
 Addition of permutations to minimise cost.
+
+## Day 22: Wizard Simulator 20XX
+Minimal breadth first search of possible 'moves'.
