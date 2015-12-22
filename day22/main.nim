@@ -21,32 +21,37 @@ proc applyEffects(state: var State) =
     state.mana += 101
     dec state.rechargeLeft
 
-proc bossPlay(state: var State): bool =
-  # returns true if the game can continue (player is not dead)
-  var armour = 0
-  applyEffects(state)
-  if state.bossHit <= 0:
-    return true
+type Spell = object
+  cost: int
+  modifier: proc(s: var State)
+  condition: proc(s: State): bool
 
-  if state.shieldLeft > 0:
-    state.hit -= max(bossDamage-7, 1)
-    dec state.shieldLeft
-  else:
-    state.hit -= bossDamage
-
-  return state.hit > 0
+var spells = [
+  # Magic Missile costs 53 mana. It instantly does 4 damage.
+  Spell(cost: 53, modifier: proc(s: var State) = s.bossHit -= 4, condition: proc(s: State): bool = true),
+  # Drain costs 73 mana. It instantly does 2 damage and heals you for 2 hit
+  # points.
+  Spell(cost: 73, modifier: proc(s: var State) = s.bossHit -= 2; s.hit += 2, condition: proc(s: State): bool = true),
+  # Shield costs 113 mana. It starts an effect that lasts for 6 turns. While
+  # it is active, your armor is increased by 7.
+  Spell(cost: 113, modifier: proc(s: var State) = s.shieldLeft = 6, condition: proc(s: State): bool = s.shieldLeft == 0),
+  # Poison costs 173 mana. It starts an effect that lasts for 6 turns. At the
+  # start of each turn while it is active, it deals the boss 3 damage.
+  Spell(cost: 173, modifier: proc(s: var State) = s.poisonLeft = 6, condition: proc(s: State): bool = s.poisonLeft == 0),
+  # Recharge costs 229 mana. It starts an effect that lasts for 5 turns. At
+  # the start of each turn while it is active, it gives you 101 new mana.
+  Spell(cost: 229, modifier: proc(s: var State) = s.rechargeLeft = 5, condition: proc(s: State): bool = s.rechargeLeft == 0),
+]
 
 proc play(initialState: State, hard: bool): int =
   var states = initQueue[State]()
   states.enqueue(initialState)
-
-  var bestManaSpent = int.high
-  var lastBestManaSpent = int.high
+  result = int.high
 
   while len(states) > 0:
     var state = states.dequeue
     if hard:
-      state.hit -= 1
+      dec state.hit
       if state.hit <= 0:
         continue
     applyEffects(state)
@@ -54,71 +59,31 @@ proc play(initialState: State, hard: bool): int =
       dec state.shieldLeft
 
     if state.bossHit <= 0:
-      bestManaSpent = min(bestManaSpent, state.manaSpent)
+      result = min(result, state.manaSpent)
       continue
 
-    if bestManaSpent < state.manaSpent + 53:
-      continue
+    for spell in spells:
+      if state.mana >= spell.cost and state.manaSpent + spell.cost < result and spell.condition(state):
+        var nextState = state
+        nextState.mana -= spell.cost
+        nextState.manaSpent += spell.cost
+        spell.modifier(nextState)
+        if nextState.bossHit <= 0: # boss dead
+          result = min(result, nextState.manaSpent)
+        else: # boss turn
+          applyEffects(nextState)
+          if nextState.bossHit <= 0: # boss dead on their turn
+            result = min(result, nextState.manaSpent)
+            continue
 
-    # Possible moves:
+          if nextState.shieldLeft > 0:
+            nextState.hit -= max(bossDamage-7, 1)
+            dec nextState.shieldLeft
+          else:
+            nextState.hit -= bossDamage
 
-    # Magic Missile costs 53 mana. It instantly does 4 damage.
-    if state.mana >= 53 and state.manaSpent + 53 < bestManaSpent:
-      var nextState = state
-      nextState.mana -= 53
-      nextState.manaSpent += 53
-      nextState.bossHit -= 4
-      if nextState.bossHit <= 0:
-        bestManaSpent = min(bestManaSpent, nextState.manaSpent)
-      else:
-        if bossPlay(nextState):
-          states.enqueue(nextState)
-
-    # Drain costs 73 mana. It instantly does 2 damage and heals you for 2 hit
-    # points.
-    if state.mana >= 73 and state.manaSpent + 73 < bestManaSpent:
-      var nextState = state
-      nextState.mana -= 73
-      nextState.manaSpent += 73
-      nextState.bossHit -= 2
-      nextState.hit += 2
-      if nextState.bossHit <= 0:
-        bestManaSpent = min(bestManaSpent, nextState.manaSpent)
-      else:
-        if bossPlay(nextState):
-          states.enqueue(nextState)
-
-    # Shield costs 113 mana. It starts an effect that lasts for 6 turns. While
-    # it is active, your armor is increased by 7.
-    if state.mana >= 113 and state.shieldLeft == 0 and state.manaSpent + 113 < bestManaSpent:
-      var nextState = state
-      nextState.mana -= 113
-      nextState.manaSpent += 113
-      nextState.shieldLeft = 6
-      if bossPlay(nextState):
-        states.enqueue(nextState)
-
-    # Poison costs 173 mana. It starts an effect that lasts for 6 turns. At the
-    # start of each turn while it is active, it deals the boss 3 damage.
-    if state.mana >= 173 and state.poisonLeft == 0 and state.manaSpent + 173 < bestManaSpent:
-      var nextState = state
-      nextState.mana -= 173
-      nextState.manaSpent += 173
-      nextState.poisonLeft = 6
-      if bossPlay(nextState):
-        states.enqueue(nextState)
-
-    # Recharge costs 229 mana. It starts an effect that lasts for 5 turns. At
-    # the start of each turn while it is active, it gives you 101 new mana.
-    if state.mana >= 229 and state.rechargeLeft == 0 and state.manaSpent + 229 < bestManaSpent:
-      var nextState = state
-      nextState.mana -= 229
-      nextState.manaSpent += 229
-      nextState.rechargeLeft = 5
-      if bossPlay(nextState):
-        states.enqueue(nextState)
-
-  return bestManaSpent
+          if nextState.hit > 0:
+            states.enqueue(nextState)
   
 var initialState = State(mana: 500, hit: 50, bossHit: 51)
 echo "Answer #1: ", play(initialState, false)
