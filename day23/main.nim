@@ -4,10 +4,7 @@ import strutils
 import tables
 
 proc run(a: uint, b: uint): uint =
-  var code = newSeq[string]()
-  for line in lines "input.txt":
-    code.add(line)
-
+  var code = readFile("input.txt").splitLines
   var regs = initTable[char, uint]()
   regs['a'] = a
   regs['b'] = b
@@ -26,14 +23,12 @@ proc run(a: uint, b: uint): uint =
       inc regs[reg]
       inc pc
     of "jmp":
-      pc += parseInt(code[pc][4..^1])
+      pc += parseInt(code[pc].split[1])
     of "jie":
-      var i = parseInt(code[pc][7..^1])
-      if regs[reg] mod 2 == 0: pc += i
+      if regs[reg] mod 2 == 0: pc += parseInt(code[pc].split[2])
       else: inc pc
     of "jio":
-      var i = parseInt(code[pc][7..^1])
-      if regs[reg] == 1: pc += i
+      if regs[reg] == 1: pc += parseInt(code[pc].split[2])
       else: inc pc
     else:
       discard
