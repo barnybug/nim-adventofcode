@@ -67,3 +67,13 @@ Addition of permutations to minimise cost.
 
 ## Day 22: Wizard Simulator 20XX
 Minimal breadth first search of possible 'moves'.
+
+## Day 23: Opening the Turing Lock
+Interpreting an instruction based program.
+
+## Day 24: It Hangs in the Balance
+Bin packing problem evaluating combinations.
+
+## Day 25: Let It Snow
+Triangular numbers, modular exponentiation.
+
